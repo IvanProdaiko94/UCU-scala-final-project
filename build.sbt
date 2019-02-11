@@ -34,7 +34,10 @@ val akkaDependencies = Seq (
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
-  "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test
+  "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
+  "com.typesafe.akka" %% "akka-http" % akkaVersion,
+  "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion % Test
+
 )
 
 def dockerSettings(debugPort: Option[Int] = None) = Seq(
