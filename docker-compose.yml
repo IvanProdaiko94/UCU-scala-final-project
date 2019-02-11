@@ -41,11 +41,6 @@ services:
     image: rickerlyman/solar-panel-emulator:latest
     depends_on:
       - kafka
-    ports:
-      - 1600:1600
-    environment:
-      CLUSTER_PORT: 1600
-      CLUSTER_IP: solar-panel-app
 
   streaming-app:
     image: rickerlyman/streaming-app:latest
@@ -54,4 +49,5 @@ services:
 
   weather-provider:
     image: rickerlyman/weather-provider:latest
-    depends_on:      - kafka
+    depends_on:
+      - kafka
