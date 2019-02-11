@@ -23,7 +23,7 @@ object Main extends App {
 
   val actor = system.actorOf(Props[WhetherRestClientActor], "WhetherRestClientActor")
 
-  system.scheduler.schedule(5 seconds, 1 seconds, actor, WhetherRestClientActor.InitiateRequest)
+  system.scheduler.schedule(3 seconds, 1 seconds, actor, WhetherRestClientActor.InitiateCityRequest)
 
 //  val BrokerList = "kafka:9092" //change it to localhost:9092 if not connecting through docker
 //  val Topic = sys.env("WEATHER_API_URL")

@@ -1,10 +1,12 @@
 package ua.ucu.edu.provider
 
-import ua.ucu.edu._
-import ua.ucu.edu.model.{Location, City}
+import akka.http.scaladsl.model.HttpResponse
+import ua.ucu.edu.model.{City, Location}
+
+import scala.concurrent.Future
 
 trait WeatherProviderApi {
-  def weatherAtLocation(location: Location)
+  def weatherAtLocation(location: Location): Future[HttpResponse]
 
-  def weatherAtCity(city: City)
+  def weatherAtCity(city: City): Future[HttpResponse]
 }
