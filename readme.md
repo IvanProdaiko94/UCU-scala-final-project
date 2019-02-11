@@ -52,15 +52,31 @@ To keep containers lightweight - minimal alpine-linux based image is used for ja
 docker pull anapsix/alpine-java
 ```
 
+### Docker clean up
+
+In some cases you may want to recreate everything from scratch and clean up environment, for that, you can use
+```
+docker system prune
+```
+
+You can remove particular images as well, by first listing them and then removing:
+```
+docker image ls -a
+```
+
+```
+docker rmi <few starting letters of image id>
+```
+
 ## Kafka
 
 ### Create topic
 
 You can use confluent bundled tools to interact with the cluster, e.g. to create topics:
 
-Command to create topic named foo with 4 partitions and replication-factor 2
+Command to create topic named foo with 4 partitions and replication-factor 1
 ```
-docker run --net=host --rm confluentinc/cp-kafka:5.0.0 kafka-topics --create --topic foo --partitions 4 --replication-factor 2 --if-not-exists --zookeeper localhost:32181
+docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --topic foo --partitions 4 --replication-factor 1 --if-not-exists --zookeeper localhost:2181
 ```
 
 ### Produce/consume topic
@@ -75,6 +91,11 @@ kafkacat -C -b localhost:19092,localhost:29092,localhost:39092 -t foo -p 0
 #### produce
 ```
 echo 'publish to partition 0' | kafkacat -P -b localhost:19092,localhost:29092,localhost:39092 -t foo -p 0
+```
+
+#### list topics
+```
+kafkacat -L -b localhost
 ```
 
 # Components
@@ -104,3 +125,10 @@ Or you can use ready-to-use wrapper for scala - https://github.com/snowplow/scal
 Kafka Streams application. The main part of the pipeline - joining and enriching two streams of data. 
 
 You should consider KStream / KTable decision while designing a pipeline.
+
+### Scaling
+
+Scaling kafka-streams is as easy as pie - just start one more instance of it. As we use docker-compose we can do so by executing:
+```
+docker-compose scale 
+```

@@ -14,7 +14,7 @@ class SensorActor(
   val api: SensorApi = new SensorGenerator
 
   override def receive: Receive = {
-    ???
+    case _ => ???
     // todo respond with measurements to parent panel actor
   }
 }

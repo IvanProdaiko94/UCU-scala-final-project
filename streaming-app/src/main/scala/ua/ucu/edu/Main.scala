@@ -13,7 +13,7 @@ object Main extends App {
   val logger = LoggerFactory.getLogger(getClass)
 
   val props = new Properties()
-  props.put(StreamsConfig.APPLICATION_ID_CONFIG, "test_app")
+  props.put(StreamsConfig.APPLICATION_ID_CONFIG, "streaming_app")
   props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(Config.KafkaBrokers))
   props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, Long.box(5 * 1000))
   props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, Long.box(0))

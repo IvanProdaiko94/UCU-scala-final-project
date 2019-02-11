@@ -87,6 +87,5 @@ lazy val streaming_app = (project in file("streaming-app"))
     libraryDependencies ++= commonDependencies ++ streamsDependencies ++ Seq(
       // your additional dependencies go here
     ),
-    dockerSettings(),
-    mainClass in assembly := Some("ua.ucu.edu.StreamsHello")
+    dockerSettings()
   )

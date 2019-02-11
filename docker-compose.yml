@@ -23,7 +23,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=WARN,state.change.logger=INFO"
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=WARN,state.change.logger=INFO,kafka.coordinator.group=WARN,kafka.cluster=WARN,kafka.log=WARN,kafka.server=WARN"
       KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
       KAFKA_TOOLS_LOG4J_LOGLEVEL: ERROR
     volumes:

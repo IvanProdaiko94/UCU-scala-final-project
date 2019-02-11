@@ -17,9 +17,11 @@ object DummyDataProducer {
 
     val props = new Properties()
     props.put("bootstrap.servers", BrokerList)
-    props.put("client.id", "solar-panel-#1")
+    props.put("client.id", "solar-panel-1")
     props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
     props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+
+    logger.info("initializing producer")
 
     val producer = new KafkaProducer[String, String](props)
 

@@ -22,5 +22,7 @@ class PlantManagerActor(
     super.preStart()
   }
 
-  override def receive: Receive = ???
+  override def receive: Receive = {
+    case _ => ???
+  }
 }

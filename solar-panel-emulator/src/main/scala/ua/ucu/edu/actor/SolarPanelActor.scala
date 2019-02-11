@@ -26,7 +26,7 @@ class SolarPanelActor(
   }
 
   override def receive: Receive = {
-    ???
+    case _ => ???
     // todo handle measurement respond and push it to kafka
   }
 }
