@@ -9,6 +9,5 @@ import scala.concurrent.Future
 trait WeatherProviderApi {
   def weatherAtLocation(location: Location): Future[HttpResponse]
 
-  def weatherAtLocation(location: Location): WeatherData
   def weatherAtCity(city: City): Future[HttpResponse]
 }

@@ -1,4 +1,4 @@
 package ua.ucu.edu.model
 
-case class Location(lon: Float, lat: Float)
+case class Location(longitude: Float, latitude: Float)
 

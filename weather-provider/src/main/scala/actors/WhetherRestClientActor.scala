@@ -5,16 +5,14 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import ua.ucu.edu.Main.system
 import ua.ucu.edu.provider.WeatherProviderApi
-import ua.ucu.edu.model.{City, Location, WeatherRecord}
+import ua.ucu.edu.model.{City, Location, WeatherData}
 
 import scala.concurrent.Future
 
 class WhetherRestClientActor extends Actor with WeatherProviderApi {
   import WhetherRestClientActor._
   import system.dispatcher
-
   import scala.util.{Failure, Success}
-
   implicit val actorSystem: ActorSystem = context.system
 
   val API_URL = sys.env("WEATHER_API_URL")
@@ -38,7 +36,7 @@ class WhetherRestClientActor extends Actor with WeatherProviderApi {
       weatherAtCity(c).onComplete {
         case Success(s) => {
           println(s._3)
-          WeatherRecord(Option.empty, 0, 0, Option(c))
+          WeatherData(Option.empty, 0, 0, Option(c))
         }
         case Failure(f) => {
           println(f.getMessage)
@@ -54,8 +52,8 @@ class WhetherRestClientActor extends Actor with WeatherProviderApi {
       HttpRequest(
         HttpMethods.GET,
         url.withQuery(Uri.Query(
-          ("lat" -> location.lat.toString),
-          ("lon" -> location.lon.toString),
+          ("lat" -> location.latitude.toString),
+          ("lon" -> location.longitude.toString),
           ("APPID" -> API_KEY),
         ))
       )
