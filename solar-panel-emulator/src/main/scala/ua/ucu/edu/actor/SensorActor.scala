@@ -1,23 +1,20 @@
 package ua.ucu.edu.actor
 
 import akka.actor.Actor
-import ua.ucu.edu.device.SensorApi
-import ua.ucu.edu.model.ReadMeasurement
+import ua.ucu.edu.device.{SensorApi, SensorGenerator}
+import ua.ucu.edu.model.{ReadMeasurement, RespondMeasurement}
 
-import scala.concurrent.duration._
 import scala.language.postfixOps
 
-abstract class SensorActor[T](
-  val deviceId: String
+class SensorActor(
+  val deviceId: String,
+  sensorType: String
 ) extends Actor {
 
-  context.system.scheduler.schedule(5 second, 5 seconds, self, ReadMeasurement)(
-    context.dispatcher, context.parent
-  )
-
-  val api: SensorApi[T]
+  val api: SensorApi = new SensorGenerator
 
   override def receive: Receive = {
-    case ReadMeasurement => sender ! api.readCurrentValue
+    ???
+    // todo respond with measurements to parent panel actor
   }
 }

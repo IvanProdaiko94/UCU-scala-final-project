@@ -1,9 +1,8 @@
 package ua.ucu.edu.provider
 
-import ua.ucu.edu._
-import ua.ucu.edu.model.Location
+import ua.ucu.edu.model._
 
 trait WeatherProviderApi {
 
-  def weatherAtLocation(location: Location)
+  def weatherAtLocation(location: Location): WeatherData
 }

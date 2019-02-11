@@ -1,6 +1,5 @@
 package ua.ucu.edu.device
 
-trait SensorApi[T] {
-
-  def readCurrentValue: T
+trait SensorApi {
+  def readCurrentValue: String
 }
