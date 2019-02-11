@@ -1,3 +1,4 @@
+
 package ua.ucu.edu.model
 import ua.ucu.edu._
 

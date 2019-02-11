@@ -8,26 +8,28 @@ services:
       - '32181:32181'
     env_file:
       - env/zookeeper.env
-    extra_hosts:
-      - "moby:127.0.0.1"
 
   kafka:
     image: confluentinc/cp-enterprise-kafka:5.1.0
     hostname: kafka
     ports:
       - '9092:9092'
-      - '29092:29092'
     depends_on:
     - zookeeper
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./kafka/broker/kafka-logs:/kafka
+      - ./kafka/broker/logs:/logs
+      - ./kafka/broker/data:/data
     env_file:
       - env/kafka.env
-    extra_hosts:
-      - "moby:127.0.0.1"
 
   solar-panel-app:
     image: rickerlyman/solar-panel-emulator:latest
     depends_on:
       - kafka
+    environment:
+      KAFKA_BROKERS: kafka:9092
     env_file:
       - env/app.env
 
@@ -35,6 +37,8 @@ services:
     image: rickerlyman/streaming-app:latest
     depends_on:
       - kafka
+    environment:
+      KAFKA_BROKERS: kafka:9092
     env_file:
       - env/app.env
 
@@ -42,5 +46,7 @@ services:
     image: rickerlyman/weather-provider:latest
     depends_on:
       - kafka
+    environment:
+      KAFKA_BROKERS: kafka:9092
     env_file:
       - env/app.env
