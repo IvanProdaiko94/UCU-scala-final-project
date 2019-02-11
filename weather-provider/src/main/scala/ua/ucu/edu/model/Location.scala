@@ -1,3 +1,3 @@
 package ua.ucu.edu.model
 
-case class Location()
+case class Location(/*???*/)

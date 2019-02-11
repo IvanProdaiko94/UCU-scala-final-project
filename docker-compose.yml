@@ -37,26 +37,9 @@ services:
     extra_hosts:
       - "moby:127.0.0.1"
 
-  schema-registry:
-    image: confluentinc/cp-schema-registry:5.1.0
-    hostname: schema-registry
-    depends_on:
-      - zookeeper
-      - kafka
-    ports:
-      - '8081:8081'
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:32181
-    extra_hosts:
-      - "moby:127.0.0.1"
-
   solar-panel-app:
     image: rickerlyman/solar-panel-emulator:latest
-#    hostname: seed
-#    links: ["seed:akkaseed"]
     depends_on:
-      - zookeeper
       - kafka
     ports:
       - 1600:1600
@@ -64,8 +47,11 @@ services:
       CLUSTER_PORT: 1600
       CLUSTER_IP: solar-panel-app
 
-#  streaming-app:
-#    image: rickerlyman/streaming-app:latest
-#
-#  weather-provider:
-#    image: rickerlyman/weather-provider:latest
+  streaming-app:
+    image: rickerlyman/streaming-app:latest
+    depends_on:
+      - kafka
+
+  weather-provider:
+    image: rickerlyman/weather-provider:latest
+    depends_on:      - kafka

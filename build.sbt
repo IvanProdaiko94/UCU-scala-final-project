@@ -31,7 +31,6 @@ val streamsDependencies = Seq(
 )
 
 val akkaDependencies = Seq (
-  "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
@@ -75,7 +74,7 @@ lazy val weather_provider = (project in file("weather-provider"))
   .enablePlugins(sbtdocker.DockerPlugin)
   .settings(
     name := "weather-provider",
-    libraryDependencies ++= commonDependencies ++ Seq(
+    libraryDependencies ++= commonDependencies ++ akkaDependencies ++ Seq(
       // your additional dependencies go here
     ),
     dockerSettings()

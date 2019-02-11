@@ -55,7 +55,9 @@ kafkacat -C -b localhost:19092,localhost:29092,localhost:39092 -t foo -p 0
 echo 'publish to partition 0' | kafkacat -P -b localhost:19092,localhost:29092,localhost:39092 -t foo -p 0
 ```
 
-# solar-panel-emulator
+# Components
+
+## solar-panel-emulator
 
 This service is responsible for generating solar plant device data - readings from various kinds of sensors.
 In the simplest variant this can be just a bunch of kafka producers. In the provided example scaffolding - this is Akka application.
@@ -68,3 +70,25 @@ Here are a few directions you can improve this assignment (bonus):
 
 You can get inspiration on protocol and some corner cases here - https://doc.akka.io/docs/akka/2.5/guide/tutorial_2.html
 Deeper your go - more complex your protocol and application is going to be.
+
+## weather-provider
+
+You should provide implementation for weather message producer
+
+## streaming-app
+
+Kafka Streams application. The main part of the pipeline - joining and enriching two streams of data.
+
+# Build
+
+To build all components into docker images - simply run `sbt docker` from the root project folder.
+
+# Deployment
+
+## Local
+
+To deploy local environment and start testing - simply run `docker-compose up` from the root project folder.
+
+## Staging
+
+TODO

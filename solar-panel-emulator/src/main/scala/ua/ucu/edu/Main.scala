@@ -32,4 +32,11 @@ object Main extends App {
   logger.info("[Producer] " + testMsg)
   val data = new ProducerRecord[String, String](Topic, testMsg)
   producer.send(data)
+
+  producer.close()
+
+  while(true) {
+    Thread.sleep(1000)
+    logger.warn("sleep")
+  }
 }
