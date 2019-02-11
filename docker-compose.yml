@@ -28,8 +28,6 @@ services:
     image: rickerlyman/solar-panel-emulator:latest
     depends_on:
       - kafka
-    environment:
-      KAFKA_BROKERS: kafka:9092
     env_file:
       - env/app.env
 
@@ -37,8 +35,6 @@ services:
     image: rickerlyman/streaming-app:latest
     depends_on:
       - kafka
-    environment:
-      KAFKA_BROKERS: kafka:9092
     env_file:
       - env/app.env
 
@@ -46,7 +42,5 @@ services:
     image: rickerlyman/weather-provider:latest
     depends_on:
       - kafka
-    environment:
-      KAFKA_BROKERS: kafka:9092
     env_file:
       - env/app.env
