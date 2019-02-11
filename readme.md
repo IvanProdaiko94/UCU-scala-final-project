@@ -1,56 +1,78 @@
-# Readme
+# Streaming course final project assignment
 
 Base project for a final assignment, contains:
-  * deployment code for local environment
-  * deployment code for to push to staging
-  * scaffolding, interfaces and code snippets
+  - deployment code for local environment
+  - deployment code for to push to staging (in-progress)
+  - scaffolding, interfaces and code snippets
 
-# Prerequisites
-  Python 2.7
-  docker
-  JVM
-  Idea
+# Environment
 
-# Docker
-  Install - https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html
-  upgrade aws cli - pip
-     `pip install awscli --upgrade --user`
-     https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
+## Prerequisites
+  - Python 2.7
+  - Docker 1.11 or greater, docker-compose
+  - JVM 1.8
 
-## Running Docker Commands as a Non-Root User
-The Docker daemon always runs as the root user. The Docker daemon binds to a Unix socket instead of a TCP port. By default, that Unix socket is owned by the user root, and so, by default, you can only access it with sudo. Since we want to be able to package our application as a non-root user, so we need to make sure that sbt-docker can access the socket in non-root. Any Unix user belonging to the group docker can read/write that socket, so you need to add your user to the Docker group.
+## Build
 
-To add your user (who has root privileges) to the Docker group, run the following command:
+To build all of the components - simply run `sbt docker` from the root project folder. This will compile code, build artifacts and push to the local docker repo.
 
+## Deploy
+
+### Local
+
+To deploy local environment and start testing - simply run `docker-compose up` from the root project folder.
+
+### Staging
+
+TODO
+
+## Docker
+
+  We are using Confluent docker images for kafka stack - https://github.com/confluentinc/cp-docker-images.
+  
+  Control center deployment can be added for visual monitoring kafka cluster but requires additional components - review compose here - https://github.com/confluentinc/cp-docker-images/blob/5.1.0-post/examples/cp-all-in-one/docker-compose.yml
+
+
+### Running Docker Commands as a Non-Root User
+
+```
 sudo usermod -aG docker <username>
 newgrp docker
+```
 
-## Management UI
-Use
+### Management UI
+Use portainer if you don't want to interact with docker through cli
 ```
 docker container run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock portainer/portainer
 ```
 
-## Java base image
+### Java base image
+To keep containers lightweight - minimal alpine-linux based image is used for java:
+```
 docker pull anapsix/alpine-java
+```
 
-# Create topic
+## Kafka
+
+### Create topic
+
+You can use confluent bundled tools to interact with the cluster, e.g. to create topics:
+
 Command to create topic named foo with 4 partitions and replication-factor 2
 ```
 docker run --net=host --rm confluentinc/cp-kafka:5.0.0 kafka-topics --create --topic foo --partitions 4 --replication-factor 2 --if-not-exists --zookeeper localhost:32181
 ```
 
-# Produce/consume topic
+### Produce/consume topic
 
-You can use bin/kafka-produce TODO
-but you can use `kafkacat` tool as well
+Or you can use https://github.com/edenhill/kafkacat tool as well, e.g.:
 
-## consume
+#### consume
 ```
 kafkacat -C -b localhost:19092,localhost:29092,localhost:39092 -t foo -p 0
 ```
 
-## produce
+#### produce
 ```
 echo 'publish to partition 0' | kafkacat -P -b localhost:19092,localhost:29092,localhost:39092 -t foo -p 0
 ```
@@ -68,27 +90,17 @@ Here are a few directions you can improve this assignment (bonus):
  - add akka nodes and deploy plant actors remotely
  - add akka clustering
 
-You can get inspiration on protocol and some corner cases here - https://doc.akka.io/docs/akka/2.5/guide/tutorial_2.html
+You can get inspiration on protocol and some corner cases here - https://doc.akka.io/docs/akka/2.5/guide/tutorial_2.html.
 Deeper your go - more complex your protocol and application is going to be.
 
 ## weather-provider
 
-You should provide implementation for weather message producer
+You should provide implementation for scheduled updates to the weather topic fetching from any freely available weather apis - https://dzone.com/articles/4-free-weather-providers-api-to-develop-weather-ap-1
+
+Or you can use ready-to-use wrapper for scala - https://github.com/snowplow/scala-weather
 
 ## streaming-app
 
-Kafka Streams application. The main part of the pipeline - joining and enriching two streams of data.
+Kafka Streams application. The main part of the pipeline - joining and enriching two streams of data. 
 
-# Build
-
-To build all components into docker images - simply run `sbt docker` from the root project folder.
-
-# Deployment
-
-## Local
-
-To deploy local environment and start testing - simply run `docker-compose up` from the root project folder.
-
-## Staging
-
-TODO
+You should consider KStream / KTable decision while designing a pipeline.

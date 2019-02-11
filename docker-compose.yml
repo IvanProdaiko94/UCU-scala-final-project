@@ -5,49 +5,50 @@ services:
     image: confluentinc/cp-zookeeper:5.1.0
     hostname: zookeeper
     ports:
-      - '32181:32181'
+      - '2181:2181'
     environment:
-      ZOOKEEPER_CLIENT_PORT: 32181
+      ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    extra_hosts:
-      - "moby:127.0.0.1"
 
   kafka:
     image: confluentinc/cp-enterprise-kafka:5.1.0
     hostname: kafka
     ports:
       - '9092:9092'
-      - '29092:29092'
     depends_on:
     - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
-      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka:29092
-      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:32181
-      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
-      CONFLUENT_METRICS_ENABLE: 'true'
-      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
-    extra_hosts:
-      - "moby:127.0.0.1"
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=WARN,state.change.logger=INFO"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: ERROR
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./kafka/broker/kafka-logs:/kafka
+      - ./kafka/broker/logs:/logs
+      - ./kafka/broker/data:/data
 
   solar-panel-app:
     image: rickerlyman/solar-panel-emulator:latest
     depends_on:
       - kafka
+    environment:
+      KAFKA_BROKERS: kafka:9092
 
   streaming-app:
     image: rickerlyman/streaming-app:latest
     depends_on:
       - kafka
+    environment:
+      KAFKA_BROKERS: kafka:9092
 
   weather-provider:
     image: rickerlyman/weather-provider:latest
     depends_on:
       - kafka
+    environment:
+      KAFKA_BROKERS: kafka:9092
