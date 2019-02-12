@@ -22,6 +22,8 @@ To build all of the components - simply run `sbt docker` from the root project f
 
 To deploy local environment and start testing - simply run `docker-compose up` from the root project folder.
 
+   On the first run, you will se topic not found errors in logs - thats because KAFKA_AUTO_CREATE_TOPICS_ENABLE is trned off - you should create topic with appropriate replication factor and number of partitions (see below), while not stopping running cluster.
+
 ### Staging
 
 TODO
