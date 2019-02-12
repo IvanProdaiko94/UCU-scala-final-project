@@ -8,7 +8,8 @@ import org.apache.kafka.streams.scala._
 import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
 import org.slf4j.LoggerFactory
 
-object Main extends App {
+// dummy app for testing purposes
+object DummyStreamingApp extends App {
 
   val logger = LoggerFactory.getLogger(getClass)
 
@@ -22,7 +23,11 @@ object Main extends App {
 
   val builder = new StreamsBuilder
 
-  val testStream = builder.stream[String, String]("test_topic")
+  val testStream = builder.stream[String, String]("weather_data")
+
+  testStream.foreach { (k, v) =>
+    logger.info(s"record processed $k->$v")
+  }
 
   testStream.to("test_topic_out")
 

@@ -2,7 +2,7 @@ name := "streaming-ucu-final-project"
 
 version := "0.1"
 
-scalaVersion := "2.12.8"
+ThisBuild / scalaVersion := "2.12.8"
 
 // These options will be used for *all* versions.
 ThisBuild / scalacOptions ++= Seq(
@@ -37,7 +37,6 @@ val akkaDependencies = Seq (
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-http" % akkaVersion,
   "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion % Test
-
 )
 
 def dockerSettings(debugPort: Option[Int] = None) = Seq(
@@ -90,5 +89,6 @@ lazy val streaming_app = (project in file("streaming-app"))
     libraryDependencies ++= commonDependencies ++ streamsDependencies ++ Seq(
       // your additional dependencies go here
     ),
-    dockerSettings()
+    dockerSettings(),
+    mainClass in assembly := Some("ua.ucu.edu.DummyStreamingApp")
   )

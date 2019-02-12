@@ -2,7 +2,7 @@ package ua.ucu.edu.kafka
 
 import java.util.Properties
 
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
+import org.apache.kafka.clients.producer.{Callback, KafkaProducer, ProducerRecord, RecordMetadata}
 import org.slf4j.{Logger, LoggerFactory}
 
 // delete_me - for testing purposes
@@ -12,7 +12,7 @@ object DummyDataProducer {
 
   def pushTestData(): Unit = {
     val BrokerList: String = System.getenv(Config.KafkaBrokers)
-    val Topic = "weather-data"
+    val Topic = "weather_data"
     val props = new Properties()
     props.put("bootstrap.servers", BrokerList)
     props.put("client.id", "weather-provider")
@@ -29,7 +29,9 @@ object DummyDataProducer {
       Thread.sleep(1000)
       logger.info(s"[$Topic] $testMsg")
       val data = new ProducerRecord[String, String](Topic, testMsg)
-      producer.send(data)
+      producer.send(data, (metadata: RecordMetadata, exception: Exception) => {
+        logger.info(metadata.toString, exception)
+      })
     }
 
     producer.close()
