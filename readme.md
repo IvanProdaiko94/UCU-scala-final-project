@@ -26,6 +26,12 @@ To deploy local environment and start testing - simply run `docker-compose up` f
 
 TODO
 
+## Logging & Debug
+
+Adjust levels in log4j.properties and in docker-compose KAFKA_LOG4J_LOGGERS. By default they set to WARN for library (kafka/zookeeper/streams/akka/etc) and DEBUG for application code
+
+While debugging streaming app for instance, start from changing log4j.rootLogger from WARN to INFO (DEBUG will give you too much bloat)
+
 ## Docker
 
   We are using Confluent docker images for kafka stack - https://github.com/confluentinc/cp-docker-images.
@@ -84,8 +90,10 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
 Or you can use https://github.com/edenhill/kafkacat tool as well, e.g.:
 
 #### consume
+Keep in mind that outbound address that kafka broker is listening to is different in this compose configuration, see KAFKA_ADVERTISED_LISTENERS
+When interacting with broker from external (local) environment e.g. when using kafkacat, you should use localhost:39092 address in this configuration.
 ```
-kafkacat -C -b localhost:19092,localhost:29092,localhost:39092 -t foo -p 0
+kafkacat -C -b localhost:39092 -t test_topic_out -p 0
 ```
 
 #### produce
@@ -126,9 +134,11 @@ Kafka Streams application. The main part of the pipeline - joining and enriching
 
 You should consider KStream / KTable decision while designing a pipeline.
 
-### Scaling
+# Scaling streaming app
 
 Scaling kafka-streams is as easy as pie - just start one more instance of it. As we use docker-compose we can do so by executing:
 ```
-docker-compose scale 
+docker-compose scale streaming-app=4
 ```
+
+Keep in mind that maximum parallelism level is number of partitions in the topic that streaming app consumes.

@@ -19,7 +19,7 @@ object Main extends App {
 
   import duration._
 
-  system.scheduler.schedule(5 seconds, 5 seconds, new Runnable {
+  system.scheduler.schedule(5 seconds, 10 seconds, new Runnable {
     override def run(): Unit = {
       logger.debug("weather request")
       // ???

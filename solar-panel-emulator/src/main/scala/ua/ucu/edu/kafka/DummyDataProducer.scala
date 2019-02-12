@@ -28,7 +28,7 @@ object DummyDataProducer {
     val testMsg = "12.3702"
 
     while (true) {
-      Thread.sleep(1000)
+      Thread.sleep(10000)
       logger.info(s"[$Topic] $testMsg")
       val data = new ProducerRecord[String, String](Topic, testMsg)
       producer.send(data)
