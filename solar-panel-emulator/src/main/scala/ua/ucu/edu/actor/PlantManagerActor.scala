@@ -42,7 +42,7 @@ class PlantManagerActor(plantName: String, location: Location) extends Actor wit
 
         case None =>
           log.info("[Registered] Panel : {}", panelId)
-          val panel = context.actorOf(SolarPanelActor.props(panelId), "panel:" + panelId)
+          val panel = context.actorOf(SolarPanelActor.props(panelId, location), "panel:" + panelId)
           context.watch(panel)
           panel forward RegisterSensors
           panelToActor += panelId -> panel
