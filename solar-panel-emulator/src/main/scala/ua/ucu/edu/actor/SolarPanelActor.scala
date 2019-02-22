@@ -15,8 +15,8 @@ import scala.language.postfixOps
   */
 
 object SolarPanelActor {
-  def props(panelId: String, location: Location): Props = Props(new SolarPanelActor(panelId, location))
 
+  def props(panelId: String, location: Location): Props = Props(new SolarPanelActor(panelId, location))
   case object RegisterSensors
   case object SensorsRegistered
 }
@@ -67,7 +67,7 @@ class SolarPanelActor(val panelId: String, location: Location) extends Actor wit
 
     case ReadMeasurement => {
       for (child <- actorToSensor.keySet) {
-        child ! ReadMeasurement
+        child forward ReadMeasurement
       }
     }
 

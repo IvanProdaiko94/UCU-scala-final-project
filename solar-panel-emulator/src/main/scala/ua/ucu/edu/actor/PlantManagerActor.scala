@@ -27,9 +27,9 @@ class PlantManagerActor(plantName: String, location: Location) extends Actor wit
   lazy val panelToActor = mutable.Map.empty[String, ActorRef]
   lazy val actorToPanel = mutable.Map.empty[ActorRef, String]
 
-  override def preStart(): Unit = log.info("[Started] Solar Plant Manager")
+  override def preStart(): Unit = log.info("[Started] Solar Plant Manager at {}", plantName)
 
-  override def postStop(): Unit = log.info("[Stopped] Solar Plant Manager")
+  override def postStop(): Unit = log.info("[Stopped] Solar Plant Manager at {}", plantName)
 
 
   override def receive: Receive = {

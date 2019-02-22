@@ -52,6 +52,7 @@ object Main extends App {
     Location(4.710989, -74.072090),
     Location(-15.826691, -47.921822),
     Location(52.370216, 4.895168),
+    Location(50.447731, 30.542721),
     Location(49.553516, 25.594767),
     Location(49.381364, 24.151640),
     Location(47.838799, 35.139568)
@@ -69,8 +70,8 @@ object Main extends App {
 
   // creating 50 panels for each plant
 
-  for (i <- 1 to 50; j <- 0 to 19) {
-    plants(j) ! RegisterPanel(names(j).toLowerCase + "-" + i.toString + "-" + Random.nextInt(100))
-  }
+  for (i <- 0 to 1)
+    for (j <- 1 to 5)
+      plants(i) ! RegisterPanel(names(i).toLowerCase + "-" + j.toString + "-" + Random.nextInt(100))
 
 }
