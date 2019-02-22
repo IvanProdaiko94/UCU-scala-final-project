@@ -2,19 +2,20 @@ package ua.ucu.edu.actor
 
 import akka.actor.Actor
 import ua.ucu.edu.device.{SensorApi, SensorGenerator}
-import ua.ucu.edu.model.{ReadMeasurement, RespondMeasurement}
+import ua.ucu.edu.model.{Measurement, ReadMeasurement, RespondMeasurement}
 
 import scala.language.postfixOps
 
-class SensorActor(
-  val deviceId: String,
-  sensorType: String
-) extends Actor {
+class SensorActor(val deviceId: String, sensorType: Measurement) extends Actor {
 
   val api: SensorApi = new SensorGenerator
 
   override def receive: Receive = {
-    case _ => ???
-    // todo respond with measurements to parent panel actor
+    case ReadMeasurement =>
+      sender ! RespondMeasurement(
+        deviceId,
+        sensorType.toString,
+        api.readCurrentValue(sensorType)
+      )
   }
 }
