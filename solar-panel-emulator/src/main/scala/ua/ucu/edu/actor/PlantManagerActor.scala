@@ -1,6 +1,6 @@
 package ua.ucu.edu.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Terminated}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import ua.ucu.edu.actor.SolarPanelActor.RegisterSensors
 import ua.ucu.edu.model.Location
 
@@ -42,7 +42,7 @@ class PlantManagerActor(plantName: String, location: Location) extends Actor wit
 
         case None =>
           log.info("[Registered] Panel : {}", panelId)
-          val panel = context.actorOf(SolarPanelActor.props(panelId, location), "panel:" + panelId)
+          val panel = context.actorOf(Props(classOf[SolarPanelActor], panelId, location), "panel-" + panelId)
           context.watch(panel)
           panel forward RegisterSensors
           panelToActor += panelId -> panel

@@ -79,12 +79,14 @@ class SolarPanelActor(val panelId: String, location: Location) extends Actor wit
 
       val data = new ProducerRecord[String, String](topic, message)
       producer.send(data)
+
+      log.info("[Success] Sent message from panel {} to topic {}", panelId, topic)
     }
 
     case RegisterSensors => {
-      val tSensor = context.actorOf(SensorActor.props(panelId, Temperature), panelId + ":" + Temperature.toString)
-      val pSensor = context.actorOf(SensorActor.props(panelId, Pressure), panelId + ":" + Pressure.toString)
-      val hSensor = context.actorOf(SensorActor.props(panelId, Humidity), panelId + ":" + Humidity.toString)
+      val tSensor = context.actorOf(Props(classOf[SensorActor], panelId, Temperature), panelId + ":" + Temperature.toString)
+      val pSensor = context.actorOf(Props(classOf[SensorActor], panelId, Pressure), panelId + ":" + Pressure.toString)
+      val hSensor = context.actorOf(Props(classOf[SensorActor], panelId, Humidity), panelId + ":" + Humidity.toString)
 
       context.watch(tSensor)
       context.watch(pSensor)
