@@ -24,11 +24,92 @@ To deploy local environment and start testing - simply run `docker-compose up` f
 
    On the first run, you will se topic not found errors in logs - thats because KAFKA_AUTO_CREATE_TOPICS_ENABLE is trned off - you should create topic with appropriate replication factor and number of partitions (see below), while not stopping running cluster.
 
+Example:
+```
+docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --topic test_topic_out --partitions 4 --replication-factor 1 --if-not-exists --zookeeper localhost:2181
+```
+
 ### Staging
 
-TODO
+#### Configure
 
-## Logging & Debug
+ - First of all change `STUDENT_NAME` environment variable in `.env` file to your identifier so you will not interfere with other student's deployments
+
+ - Install [ecs-cli](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
+
+ - Get AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from teacher.
+
+ - Configure cli and login to ecr to be able to push images. You can simply use provided script:
+   ```
+   ./staging_configure.sh <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>
+   ```
+
+#### Build and push docker images to ECR
+
+   You will be publishing your built docker images to a shared ECR registry.
+   Configurations provided to you here will tag images with *$STUDENT_NAME* by default - please, do not change this behaviour.
+   You will not be able to fetch someone else's image to your machine.
+
+   After building an image with `sbt docker` you can do `sbt dockerPush` to push. Or you can do both with `dockerBuildAndPush`
+
+#### Deployment
+
+   Use provided script with the same docker-compose style commands:
+   - to start your service:
+   ```
+   ./staging_compose.sh up
+   ```
+   - do not forget to stop and clean up:
+   ```
+   ./staging_compose.sh rm --delete-namespace
+   ```
+   - of course you can just stop without deleting the service and then start again using `start` and `stop` commands
+   - to scale:
+   ```
+   ./staging_compose.sh scale 2
+   ```
+   - list running containers
+   ```
+   ./staging_compose.sh ps
+   ```
+
+   Read AWS ecs-cli documentation if you want/need - above scripts are just wrappers around *ecs-cli*.
+
+##### Important
+   **!!!** If you use ecs-cli directly make sure you specify --project-name parameter otherwise you may interfere with someone else's deployment.
+
+#### Logs and debugging your app
+
+   This is essential for you to debug. Having the output of the `staging_compose ps` command with taskId, you can access logs of your service run like this:
+   ```
+   ecs-cli logs --task-id 6ef4bc73-9bed-499c-91ee-390da6d2a851 --follow
+   ```
+
+#### Interacting with Kafka
+
+   Basically, you need 3 types of operations:
+
+   - create/describe topic
+
+   - consume topic
+
+   - produce into topic
+
+   **!!!** Important: the IP addresses of Kafka brokers may change and data in topics deleted. If so - you will be informed in the chat.
+
+#### Windows
+
+   Scripts provided to you were mostly tested on Unix environment - please reach to the teacher if you face any problems.
+
+#### Hints
+
+    When debugging `ecs-cli compose` outputs with --debug you may find useful piping through
+    ```
+    | awk '{gsub(/\\n/,"\n")}1'
+    ```
+    to substitute \n with actual newline
+
+## Logging & Debugging
 
 Adjust levels in log4j.properties and in docker-compose KAFKA_LOG4J_LOGGERS. By default they set to WARN for library (kafka/zookeeper/streams/akka/etc) and DEBUG for application code
 
@@ -39,7 +120,6 @@ While debugging streaming app for instance, start from changing log4j.rootLogger
   We are using Confluent docker images for kafka stack - https://github.com/confluentinc/cp-docker-images.
   
   Control center deployment can be added for visual monitoring kafka cluster but requires additional components - review compose here - https://github.com/confluentinc/cp-docker-images/blob/5.1.0-post/examples/cp-all-in-one/docker-compose.yml
-
 
 ### Running Docker Commands as a Non-Root User
 

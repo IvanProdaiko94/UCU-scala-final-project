@@ -1,6 +1,6 @@
 name := "streaming-ucu-final-project"
 
-version := "0.1"
+ThisBuild / version := "0.1"
 
 ThisBuild / scalaVersion := "2.12.8"
 
@@ -52,9 +52,16 @@ def dockerSettings(debugPort: Option[Int] = None) = Seq(
     }
   },
   imageNames in docker := Seq(
-    ImageName(s"rickerlyman/${name.value}:latest")
+    ImageName(
+      registry = Some(sys.env("REGISTRY_URI")),
+      namespace = Some("ucu-class"),
+      repository = name.value,
+      tag = Some(s"${sys.env("STUDENT_NAME")}-${version.value}")
+    )
   )
 )
+
+envFileName in ThisBuild := ".env"
 
 lazy val root = (project in file("."))
   .settings(name := "streaming-ucu-final-project")
