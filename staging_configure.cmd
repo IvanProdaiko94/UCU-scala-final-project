@@ -18,8 +18,8 @@ ecs-cli configure profile^
  --access-key %AWS_ACCESS_KEY_ID%^
   --secret-key %AWS_SECRET_ACCESS_KEY%^
    --profile-name ucu-class || exit /b
-aws configure set aws_access_key_id %AWS_ACCESS_KEY_ID% || exit /b
-aws configure set aws_secret_access_key %AWS_SECRET_ACCESS_KEY% || exit /b
+aws configure set AWS_ACCESS_KEY_ID %AWS_ACCESS_KEY_ID% || exit /b
+aws configure set AWS_SECRET_ACCESS_KEY %AWS_SECRET_ACCESS_KEY% || exit /b
 aws configure set default.region us-east-1 || exit /b
 ecs-cli configure profile default --profile-name ucu-class || exit /b
 

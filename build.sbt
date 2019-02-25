@@ -58,6 +58,7 @@ def dockerSettings(debugPort: Option[Int] = None) = Seq(
       repository = name.value,
       tag = Some(s"${sys.env("STUDENT_NAME")}-${version.value}")
     )
+//    , ImageName(s"rickerlyman/${name.value}:latest")
   )
 )
 

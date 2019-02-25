@@ -13,10 +13,12 @@ then
         exit 1;
 fi
 
+shift # shift arguments
+
 ecs-cli compose \
    --cluster-config ucu-class \
    --region us-east-1 \
    --debug \
    --file staging-$SERVICE_NAME.yml \
    --project-name $STUDENT_NAME-$SERVICE_NAME \
-   service "${@: -1}"
+   service "$@"
