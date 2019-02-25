@@ -13,7 +13,7 @@ Base project for a final assignment, contains:
   - JVM 1.8
   - sbt
   - AWS CLI tools
-  - OpenSSH
+  - SSH client
 
 ## Build
 
