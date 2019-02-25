@@ -68,7 +68,7 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
    Use provided script with the similar to docker-compose style commands.
    You should specify as a first argument name of the service (same names as specified above) and then follows command like `up`, `ps`, `start`, `stop`, `down`, `scale 3`.
 
-   On Windows you have similar script available (
+   On Windows you have same script available (.cmd)
 
    - to start your service:
    ```
@@ -110,7 +110,9 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
    ./kafka_client.sh
    ```
 
-   If you're on Windows - then configure Putty accordingly
+   If you're on Windows - then configure Putty accordingly - use MSKKeyPair.pem file provided to you.
+
+   Once logged in - you can run commands below from the home dir.
 
    Basically, you need 3 types of operations:
 
@@ -140,13 +142,13 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
 
 #### Windows
 
-   On Windows, make sure you configure aws-cli before running staging_configure.cmd
+   On Windows, make sure you configure aws-cli (`aws configure`) before running `staging_configure.cmd`
 
-   Scripts provided to you were mostly tested on Unix environment - please reach to the teacher if you face any problems.
+   Scripts provided to you were mostly tested on Unix environment - please contact the teacher if you face any problems.
 
 #### Hints
 
-   When debugging `ecs-cli compose` outputs with --debug you may find useful piping through
+   When debugging `ecs-cli compose` task create outputs with --debug you may find useful piping through
 
    ```
    ... | awk '{gsub(/\\n/,"\n")}1'
