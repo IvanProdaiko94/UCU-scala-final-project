@@ -13,6 +13,7 @@ Base project for a final assignment, contains:
   - JVM 1.8
   - sbt
   - AWS CLI tools
+  - OpenSSH
 
 ## Build
 
@@ -101,7 +102,7 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
 
    To log in to that client machine simply run
    ```
-   ./kafka-client.sh
+   ./kafka_client.sh
    ```
 
    Basically, you need 3 types of operations:
@@ -133,6 +134,8 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
 #### Windows
 
    Scripts are in progress...
+
+   Until then - you can use something like Git Bash - MinGw which should be fairly straightforward.
 
    <!--//Scripts provided to you were mostly tested on Unix environment - please reach to the teacher if you face any problems. -->
 
