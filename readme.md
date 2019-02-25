@@ -1,8 +1,8 @@
 # Streaming course final project assignment
 
 Base project for a final assignment, contains:
-  - deployment code for local environment
-  - deployment code for to push to staging (in-progress)
+  - local environment set up
+  - deployment code for staging
   - scaffolding, interfaces and code snippets
 
 # Environment
@@ -11,6 +11,8 @@ Base project for a final assignment, contains:
   - Python 2.7
   - Docker 1.11 or greater, docker-compose
   - JVM 1.8
+  - sbt
+  - AWS CLI tools
 
 ## Build
 
@@ -37,12 +39,14 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
 
  - Install [ecs-cli](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 
- - Get AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from teacher.
+ - Get user credentials with AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from teacher.
 
  - Configure cli and login to ecr to be able to push images. You can simply use provided script:
    ```
    ./staging_configure.sh <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>
    ```
+
+###### **!!!** Do not share or commit provided credentials anywhere on the internet
 
 #### Build and push docker images to ECR
 
@@ -54,29 +58,35 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
 
 #### Deployment
 
-   Use provided script with the same docker-compose style commands:
+   You're going to operate with three services separately:
+   - `weather-provider` - generator of weather data
+   - `solar-panel-emulator` - generator of sensor data
+   - `streaming-app` - streaming application
+
+   Use provided script with the similar to docker-compose style commands. You should specify as a first argument name of the service (same names as specified above) and then follows command like `up`, `ps`, `start`, `stop`, `down`, `scale 3`.
    - to start your service:
    ```
-   ./staging_compose.sh up
+   ./staging_compose.sh <name-of-the-service> up
    ```
    - do not forget to stop and clean up:
    ```
-   ./staging_compose.sh rm --delete-namespace
+   ./staging_compose.sh <name-of-the-service> rm --delete-namespace
    ```
    - of course you can just stop without deleting the service and then start again using `start` and `stop` commands
    - to scale:
    ```
-   ./staging_compose.sh scale 2
+   ./staging_compose.sh <name-of-the-service> scale 2
    ```
    - list running containers
    ```
-   ./staging_compose.sh ps
+   ./staging_compose.sh <name-of-the-service> ps
    ```
 
    Read AWS ecs-cli documentation if you want/need - above scripts are just wrappers around *ecs-cli*.
 
 ##### Important
    **!!!** If you use ecs-cli directly make sure you specify --project-name parameter otherwise you may interfere with someone else's deployment.
+   By default --project-name equals to $STUDENT_NAME-$SERVICE_NAME
 
 #### Logs and debugging your app
 
@@ -87,27 +97,53 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
 
 #### Interacting with Kafka
 
+   At the moment access to kafka is managed from single client ec2 machine. To log in to the machine ask teacher to provide you a pem file and put it to the project root.
+
+   To log in to that client machine simply run
+   ```
+   ./kafka-client.sh
+   ```
+
    Basically, you need 3 types of operations:
 
-   - create/describe topic
-
+   - create/describe/list topics
+     - create
+     ```
+     kafka-topics.sh --zookeeper 10.0.2.170:2181,10.0.0.194:2181,10.0.1.119:2181 --create --topic test_topic_out --replication-factor 3 --partitions 2
+     ```
+     - describe
+     ```
+     kafka-topics.sh --zookeeper 10.0.2.170:2181,10.0.0.194:2181,10.0.1.119:2181 --describe --topic test_topic_out
+     ```
+     - list
+     ```
+     kafka-topics.sh --zookeeper 10.0.2.170:2181,10.0.0.194:2181,10.0.1.119:2181 --list
+     ```
    - consume topic
-
+     ```
+     kafka-console-consumer.sh --bootstrap-server 10.0.1.107:9092,10.0.2.71:9092,10.0.0.112:9092 --topic sensor-data --from-beginning
+     ```
    - produce into topic
+     ```
+     kafka-console-producer.sh --broker-list 10.0.1.107:9092,10.0.2.71:9092,10.0.0.112:9092 --topic sensor-data
+     ```
 
-   **!!!** Important: the IP addresses of Kafka brokers may change and data in topics deleted. If so - you will be informed in the chat.
+###### **!!!** Important: the IP addresses of Kafka brokers may change and data in topics deleted. If so - you will be informed in the chat.
 
 #### Windows
 
-   Scripts provided to you were mostly tested on Unix environment - please reach to the teacher if you face any problems.
+   Scripts are in progress...
+
+   <!--//Scripts provided to you were mostly tested on Unix environment - please reach to the teacher if you face any problems. -->
 
 #### Hints
 
-    When debugging `ecs-cli compose` outputs with --debug you may find useful piping through
-    ```
-    | awk '{gsub(/\\n/,"\n")}1'
-    ```
-    to substitute \n with actual newline
+   When debugging `ecs-cli compose` outputs with --debug you may find useful piping through
+
+   ```
+   ... | awk '{gsub(/\\n/,"\n")}1'
+   ```
+   to substitute \n with actual newline
 
 ## Logging & Debugging
 
