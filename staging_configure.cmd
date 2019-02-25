@@ -1,5 +1,8 @@
 ::staging_configure.bat
 
+if "%1"=="" goto :empty
+if "%2"=="" goto :empty
+
 set AWS_ACCESS_KEY_ID=%1
 set AWS_SECRET_ACCESS_KEY=%2
 
@@ -22,3 +25,5 @@ aws ecr get-login --region us-east-1 --no-include-email > _login.bat
 call _login.bat
 del _login.bat
 
+:empty
+echo "supply AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY as this script arguments"

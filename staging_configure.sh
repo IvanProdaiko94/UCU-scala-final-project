@@ -3,6 +3,12 @@
 set -e  # exit immediately if a command exits with a non-zero status
 set -x  # print all executed commands on terminal
 
+if [ -z "$1" ] || [ -z "$2" ]
+then
+    echo -e "\nPlease supply AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY as arguments to this script\n"
+    exit 1
+fi
+
 export $(grep -v '^#' .env | xargs)
 
 AWS_ACCESS_KEY_ID=$1
