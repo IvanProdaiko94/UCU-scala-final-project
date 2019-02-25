@@ -86,8 +86,8 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
    Read AWS ecs-cli documentation if you want/need - above scripts are just wrappers around *ecs-cli*.
 
 ##### Important
-   **!!!** If you use ecs-cli directly make sure you specify --project-name parameter otherwise you may interfere with someone else's deployment.
-   By default --project-name equals to $STUDENT_NAME-$SERVICE_NAME
+   **!!!** If you use ecs-cli directly make sure you specify --project-name parameter properly, otherwise you may interfere with someone else's deployment.
+   By default in staging_composes script `--project-name` equals to `$STUDENT_NAME-$SERVICE_NAME`. Service name created will have a prefix `service-`. Cloudwatch logs will go into the same group but will have prefix with `$STUDENT_NAME-`
 
 #### Logs and debugging your app
 
@@ -104,6 +104,8 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
    ```
    ./kafka_client.sh
    ```
+
+   If you're on Windows - then configure Putty accordingly
 
    Basically, you need 3 types of operations:
 

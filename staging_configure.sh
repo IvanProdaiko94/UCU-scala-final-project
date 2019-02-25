@@ -19,6 +19,9 @@ ecs-cli --version
 ecs-cli configure --config-name ucu-class --cluster ucu-class --default-launch-type FARGATE --region us-east-1 --compose-service-name-prefix service-
 ecs-cli configure default --config-name ucu-class
 ecs-cli configure profile --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY --profile-name ucu-class
+aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID || exit /b
+aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY || exit /b
+aws configure set default.region us-east-1 || exit /b
 ecs-cli configure profile default --profile-name ucu-class
 
 # login to ecr registry
