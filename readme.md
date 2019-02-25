@@ -46,6 +46,7 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
    ```
    ./staging_configure.sh <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>
    ```
+   - On Windows, run `aws configure` first then proceed with `staging_configure.cmd`
 
 ###### **!!!** Do not share or commit provided credentials anywhere on the internet
 
@@ -64,7 +65,11 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
    - `solar-panel-emulator` - generator of sensor data
    - `streaming-app` - streaming application
 
-   Use provided script with the similar to docker-compose style commands. You should specify as a first argument name of the service (same names as specified above) and then follows command like `up`, `ps`, `start`, `stop`, `down`, `scale 3`.
+   Use provided script with the similar to docker-compose style commands.
+   You should specify as a first argument name of the service (same names as specified above) and then follows command like `up`, `ps`, `start`, `stop`, `down`, `scale 3`.
+
+   On Windows you have similar script available (
+
    - to start your service:
    ```
    ./staging_compose.sh <name-of-the-service> up
@@ -135,11 +140,9 @@ docker run --net=host --rm confluentinc/cp-kafka:5.1.0 kafka-topics --create --t
 
 #### Windows
 
-   Scripts are in progress...
+   On Windows, make sure you configure aws-cli before running staging_configure.cmd
 
-   Until then - you can use something like Git Bash - MinGw which should be fairly straightforward.
-
-   <!--//Scripts provided to you were mostly tested on Unix environment - please reach to the teacher if you face any problems. -->
+   Scripts provided to you were mostly tested on Unix environment - please reach to the teacher if you face any problems.
 
 #### Hints
 

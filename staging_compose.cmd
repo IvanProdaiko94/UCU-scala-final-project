@@ -3,7 +3,7 @@
 @rem read envs
 for /f "delims== tokens=1,2" %%G in (.env) do set %%G=%%H
 
-SERVICE_NAME=%1
+set SERVICE_NAME=%1
 
 if /I not "%SERVICE_NAME%"=="streaming-app" (
    if /I not "%SERVICE_NAME%"=="weather-provider" (
