@@ -1,5 +1,7 @@
 ::staging_configure.bat
 
+@echo off
+
 if "%1"=="" goto :empty
 if "%2"=="" goto :empty
 

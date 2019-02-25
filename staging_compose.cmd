@@ -1,5 +1,7 @@
 ::staging_compose.bat
 
+@echo off
+
 @rem read envs
 for /f "delims== tokens=1,2" %%G in (.env) do set %%G=%%H
 
