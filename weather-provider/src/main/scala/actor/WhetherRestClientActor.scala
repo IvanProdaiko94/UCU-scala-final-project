@@ -1,46 +1,69 @@
 package actor
 
-import akka.actor.{Actor, ActorSystem}
+import java.util.Properties
+
+import akka.actor.{Actor, ActorLogging, ActorSystem}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import ua.ucu.edu.Main.system
 import ua.ucu.edu.provider.WeatherProviderApi
-import ua.ucu.edu.model.{City, Location, WeatherData}
+import ua.ucu.edu.model.{City, Location}
 
 import scala.concurrent.Future
 
-class WhetherRestClientActor extends Actor with WeatherProviderApi {
+object Config {
+  val KafkaBrokers = "KAFKA_BROKERS"
+  val WeatherTopic = "WEATHER_TOPIC_NAME"
+}
+
+class WhetherRestClientActor extends Actor with WeatherProviderApi with ActorLogging  {
   import WhetherRestClientActor._
   import system.dispatcher
   import scala.util.{Failure, Success}
   implicit val actorSystem: ActorSystem = context.system
 
-  val API_URL = sys.env("WEATHER_API_URL")
-  val API_KEY = sys.env("WEATHER_API_KEY")
+  val BrokerList: String = System.getenv(Config.KafkaBrokers)
+  val topic = System.getenv(Config.WeatherTopic)
+  val props = new Properties()
+
+  log.info("[Kafka] Started topic: {}", topic)
+
+  props.put("bootstrap.servers", BrokerList)
+  props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+  props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+
+  val producer = new KafkaProducer[String, String](props)
+
+  val API_URL = System.getenv("WEATHER_API_URL")
+  val API_KEY = System.getenv("WEATHER_API_KEY")
 
   override def receive: Receive = {
     case InitiateLocationRequest => {
-//      weatherAtLocation().onComplete {
-//        case Success(s) => {
-//          println(s._3)
-//          Option(WeatherRecord(Option(location), 0, 0, Option.empty))
-//        }
-//        case Failure(f) => {
-//          println(f.getMessage)
-//          Option.empty
-//        }
-//      }
-    }
-    case InitiateCityRequest => {
-      val c = City(sys.env("WEATHER_LOCATION_CITY"), sys.env("WEATHER_LOCATION_COUNTRY"))
-      weatherAtCity(c).onComplete {
+      weatherAtLocation(Location(
+        System.getenv("WEATHER_LOCATION_LON").toFloat,
+        System.getenv("WEATHER_LOCATION_LAT").toFloat,
+      )).onComplete {
         case Success(s) => {
-          println(s._3)
-          WeatherData(Option.empty, 0, 0, Option(c))
+          log.info("[Kafka] Stream data\n: {}", s._3.toString)
+          val data = new ProducerRecord[String, String](topic, s._3.toString)
+          producer.send(data)
         }
         case Failure(f) => {
           println(f.getMessage)
-          Nil
+        }
+      }
+    }
+    case InitiateCityRequest => {
+      val c = City(System.getenv("WEATHER_LOCATION_CITY"), System.getenv("WEATHER_LOCATION_COUNTRY"))
+      weatherAtCity(c).onComplete {
+        case Success(s) => {
+          log.info("[Kafka] Stream data\n: {}", s._3.toString)
+          val data = new ProducerRecord[String, String](topic, s._3.toString)
+          producer.send(data)
+        }
+        case Failure(f) => {
+          println(f.getMessage)
         }
       }
     }
@@ -71,6 +94,11 @@ class WhetherRestClientActor extends Actor with WeatherProviderApi {
         ))
       )
     )
+  }
+
+  override def postStop(): Unit = {
+    log.info("[Stopped] weather data producer")
+    producer.close()
   }
 }
 
