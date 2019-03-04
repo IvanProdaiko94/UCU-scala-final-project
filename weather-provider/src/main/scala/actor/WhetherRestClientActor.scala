@@ -1,4 +1,4 @@
-package actors
+package actor
 
 import akka.actor.{Actor, ActorSystem}
 import akka.http.scaladsl.Http

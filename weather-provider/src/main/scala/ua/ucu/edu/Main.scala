@@ -1,6 +1,6 @@
 package ua.ucu.edu
 
-import actors.WhetherRestClientActor
+import actor.WhetherRestClientActor
 import akka.actor.{ActorSystem, Props}
 import org.slf4j.LoggerFactory
 
