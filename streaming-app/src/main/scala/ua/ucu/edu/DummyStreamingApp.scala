@@ -23,7 +23,7 @@ object DummyStreamingApp extends App {
 
   val builder = new StreamsBuilder
 
-  val testStream = builder.stream[String, String]("weather_data")
+  val testStream = builder.stream[String, String]("nonames-weather_data")
 
   testStream.foreach { (k, v) =>
     logger.info(s"record processed $k->$v")
