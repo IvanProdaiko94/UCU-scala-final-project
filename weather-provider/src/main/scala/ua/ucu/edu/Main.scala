@@ -1,8 +1,7 @@
 package ua.ucu.edu
 
-import ua.ucu.edu.kafka.DummyDataProducer
-
-import akka.actor.ActorSystem
+import actor.WhetherRestClientActor
+import akka.actor.{ActorSystem, Props}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.duration
@@ -19,14 +18,7 @@ object Main extends App {
 
   import duration._
 
-  system.scheduler.schedule(5 seconds, 10 seconds, new Runnable {
-    override def run(): Unit = {
-      logger.debug("weather request")
-      // ???
-      // todo - ask weather api and send data to kafka topic - recommended format is json - or you can come up with simpler string-based protocol
-    }
-  })
+  val actor = system.actorOf(Props[WhetherRestClientActor], "WhetherRestClientActor")
 
-  // for testing purposes only
-  DummyDataProducer.pushTestData()
+  system.scheduler.schedule(3 seconds, 1 seconds, actor, WhetherRestClientActor.InitiateCityRequest)
 }
