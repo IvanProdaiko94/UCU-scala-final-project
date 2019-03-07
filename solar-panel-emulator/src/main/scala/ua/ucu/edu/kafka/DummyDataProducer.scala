@@ -13,7 +13,7 @@ object DummyDataProducer {
   // This is just for testing purposes
   def pushTestData(): Unit = {
     val BrokerList: String = System.getenv(Config.KafkaBrokers)
-    val Topic = "sensor-data"
+    val Topic = "nonames-sensor-data"
 
     val props = new Properties()
     props.put("bootstrap.servers", BrokerList)

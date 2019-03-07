@@ -32,7 +32,7 @@ class SolarPanelActor(val panelId: String, location: Location) extends Actor wit
   import SolarPanelActor._
 
   val BrokerList: String = System.getenv(Config.KafkaBrokers)
-  val topic = "sensor-data"
+  val topic = "nonames-sensor-data"
   val props = new Properties()
 
   log.info("[Kafka] Started for panel {}", panelId)
