@@ -94,7 +94,7 @@ class WhetherRestClientActor extends Actor with ActorLogging {
 
   override def postStop(): Unit = {
     log.info("[Stopped] weather data producer")
-//    producer.close()
+    producer.close()
   }
 }
 
