@@ -6,16 +6,27 @@ import org.slf4j.LoggerFactory
 
 import scala.concurrent.duration
 import scala.language.postfixOps
+import scala.io.Source.fromFile
+
+import ua.ucu.edu.model.Location
 
 object Main extends App {
+  val bufferedSource = fromFile("weather-provider/src/main/resources/locations.csv")
+  var locations: List[Location] = List()
+  for (line <- bufferedSource.getLines) {
+    val cols = line.split(",").map(_.trim)
+    println(cols(0), cols(1), cols(2))
+    locations :+ Location(cols(0), cols(1).toFloat, cols(2).toFloat)
+  }
+  bufferedSource.close
+
+  WhetherRestClientActor.Locations.set(locations)
 
   val logger = LoggerFactory.getLogger(getClass)
-
   logger.info("======== Weather Provider App Init ========")
 
   val system = ActorSystem()
   import system.dispatcher
-
   import duration._
 
   val actor = system.actorOf(Props[WhetherRestClientActor], "WhetherRestClientActor")
