@@ -23,9 +23,16 @@ object DummyStreamingApp extends App {
 
   val builder = new StreamsBuilder
 
-  val sensor_data_stream = builder.stream[String, String]("nonames-sensor-data")
-  val weather_data_stream = builder.stream[String, String]("nonames-weather-data")
-  val main_stream = sensor_data_stream  // .merge(weather_data_stream)
+  val sensor_data_stream = builder.stream[String, String]("nonames-sensor-data").map(
+    (_, value) => (value.split('-')(0), value.split('-').slice(1, 999).mkString("-")))
+  val weather_data_stream = builder.stream[String, String]("nonames-weather-data")  // to resolve
+  val main_stream = sensor_data_stream  // .join(weather_data_stream,
+//    (sensorValue, weatherValue) -> "left=" + leftValue + ", right=" + rightValue, /* ValueJoiner */
+//    JoinWindows.of(TimeUnit.MINUTES.toMillis(5)),
+//    Serdes.String(), /* key */
+//    Serdes.Long(),   /* left value */
+//    Serdes.Double()  /* right value */
+//  )
 
   main_stream.foreach { (k, v) =>
     logger.info(s"test record processed $k->$v")
