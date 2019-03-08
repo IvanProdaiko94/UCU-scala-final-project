@@ -11,19 +11,14 @@ import ua.ucu.edu.model.Location
 
 import scala.concurrent.Future
 
-object Config {
-  val KafkaBrokers = "KAFKA_BROKERS"
-  val WeatherTopic = "WEATHER_TOPIC_NAME"
-}
-
 class WhetherRestClientActor extends Actor with ActorLogging {
   import WhetherRestClientActor._
   import system.dispatcher
   import scala.util.{Failure, Success}
   implicit val actorSystem: ActorSystem = context.system
 
-  val BrokerList: String = System.getenv(Config.KafkaBrokers)
-  val topic = System.getenv(Config.WeatherTopic)
+  val BrokerList: String = System.getenv("KAFKA_BROKERS")
+  val topic = System.getenv("WEATHER_TOPIC_NAME")
   val props = new Properties()
 
   log.info("[Kafka] Started topic: {}", topic)
