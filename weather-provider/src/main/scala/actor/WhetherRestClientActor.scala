@@ -41,7 +41,7 @@ class WhetherRestClientActor extends Actor with ActorLogging {
         .onComplete {
           case Success(s) => {
             log.info("[Kafka] Stream data\n: {}", s._3.toString)
-            val data = new ProducerRecord[String, String, String](topic, loc.city, s._3.toString)
+            val data = new ProducerRecord[String, String](topic, loc.city, s._3.toString)
             producer.send(data)
           }
           case Failure(f) => {
@@ -55,7 +55,7 @@ class WhetherRestClientActor extends Actor with ActorLogging {
         .onComplete {
           case Success(s) => {
             log.info("[Kafka] Stream data\n: {}", s._3.toString)
-            val data = new ProducerRecord[String, String, String](topic, loc.city, s._3.toString)
+            val data = new ProducerRecord[String, String](topic, loc.city, s._3.toString)
             producer.send(data)
           }
           case Failure(f) => {
