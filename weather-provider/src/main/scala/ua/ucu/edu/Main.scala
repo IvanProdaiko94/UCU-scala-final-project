@@ -11,7 +11,7 @@ import scala.io.Source.fromFile
 import ua.ucu.edu.model.Location
 
 object Main extends App {
-  val bufferedSource = fromFile("weather-provider/src/main/resources/locations.csv")
+  val bufferedSource = fromFile(System.getenv("LOCATIONS_FILE_PATH"))
   var locations: List[Location] = List()
   for (line <- bufferedSource.getLines) {
     val cols = line.split(",").map(_.trim)
@@ -30,5 +30,5 @@ object Main extends App {
 
   val actor = system.actorOf(Props[WhetherRestClientActor], "WhetherRestClientActor")
 
-  system.scheduler.schedule(3 seconds, 1 seconds, actor, WhetherRestClientActor.InitiateCityRequest)
+  system.scheduler.schedule(3 seconds, 1 seconds, actor, WhetherRestClientActor.InitiateLocationRequest)
 }
