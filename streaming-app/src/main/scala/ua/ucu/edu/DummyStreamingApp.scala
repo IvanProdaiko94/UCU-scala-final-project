@@ -23,13 +23,15 @@ object DummyStreamingApp extends App {
 
   val builder = new StreamsBuilder
 
-  val testStream = builder.stream[String, String]("nonames-weather_data")
+  val sensor_data_stream = builder.stream[String, String]("nonames-sensor-data")
+  val weather_data_stream = builder.stream[String, String]("nonames-weather-data")
+  val main_stream = sensor_data_stream  // .merge(weather_data_stream)
 
-  testStream.foreach { (k, v) =>
-    logger.info(s"record processed $k->$v")
+  main_stream.foreach { (k, v) =>
+    logger.info(s"test record processed $k->$v")
   }
 
-  testStream.to("test_topic_out")
+  main_stream.to("test_topic_out")
 
   val streams = new KafkaStreams(builder.build(), props)
   streams.cleanUp()
