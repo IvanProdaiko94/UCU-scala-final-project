@@ -15,8 +15,7 @@ object Main extends App {
   var locations: List[Location] = List()
   for (line <- bufferedSource.getLines) {
     val cols = line.split(",").map(_.trim)
-    println(cols(0), cols(1), cols(2))
-    locations :+ Location(cols(0), cols(1).toFloat, cols(2).toFloat)
+    locations = locations :+ Location(cols(0), cols(1).toFloat, cols(2).toFloat)
   }
   bufferedSource.close
 

@@ -22,17 +22,17 @@ class WhetherRestClientActor extends Actor with ActorLogging {
   import scala.util.{Failure, Success}
   implicit val actorSystem: ActorSystem = context.system
 
-//  val BrokerList: String = System.getenv(Config.KafkaBrokers)
-//  val topic = System.getenv(Config.WeatherTopic)
-//  val props = new Properties()
-//
-//  log.info("[Kafka] Started topic: {}", topic)
-//
-//  props.put("bootstrap.servers", BrokerList)
-//  props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-//  props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+  val BrokerList: String = System.getenv(Config.KafkaBrokers)
+  val topic = System.getenv(Config.WeatherTopic)
+  val props = new Properties()
 
-//  val producer = new KafkaProducer[String, String](props)
+  log.info("[Kafka] Started topic: {}", topic)
+
+  props.put("bootstrap.servers", BrokerList)
+  props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+  props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+
+  val producer = new KafkaProducer[String, String](props)
 
   val API_URL = System.getenv("WEATHER_API_URL")
   val API_KEY = System.getenv("WEATHER_API_KEY")
@@ -41,17 +41,13 @@ class WhetherRestClientActor extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case InitiateLocationRequest => {
-      val loc = Locations.getByIndex(i)
+      val loc = Locations.getItem()
       weatherAtLocation(loc.latitude.toString, loc.longitude.toString)
-        .map(x => {
-          i += 1
-          x
-        })
         .onComplete {
           case Success(s) => {
             log.info("[Kafka] Stream data\n: {}", s._3.toString)
-//            val data = new ProducerRecord[String, String](topic, s._3.toString)
-//            producer.send(data)
+            val data = new ProducerRecord[String, String, String](topic, loc.city, s._3.toString)
+            producer.send(data)
           }
           case Failure(f) => {
             println(f.getMessage)
@@ -59,17 +55,13 @@ class WhetherRestClientActor extends Actor with ActorLogging {
       }
     }
     case InitiateCityRequest => {
-      val loc = Locations.getByIndex(i)
+      val loc = Locations.getItem()
       weatherAtCity(loc.city)
-        .map(x => {
-          i += 1
-          x
-        })
         .onComplete {
           case Success(s) => {
             log.info("[Kafka] Stream data\n: {}", s._3.toString)
-//            val data = new ProducerRecord[String, String](topic, s._3.toString)
-//            producer.send(data)
+            val data = new ProducerRecord[String, String, String](topic, loc.city, s._3.toString)
+            producer.send(data)
           }
           case Failure(f) => {
             println(f.getMessage)
@@ -116,9 +108,16 @@ object WhetherRestClientActor {
   case object InitiateCityRequest
   case object Locations {
     private var locations: List[Location] = List[Location]()
-    def set(loc: List[Location]): Unit = locations = loc
+    var i = 0
+    def set(loc: List[Location]): Unit = {
+      locations = loc
+    }
     def get(): List[Location] = locations
-    def getByIndex(i: Int): Location = {
+    def getItem(): Location = {
+      i += 1
+      if (i == locations.length) {
+        i = 0
+      }
       locations(i)
     }
   }
