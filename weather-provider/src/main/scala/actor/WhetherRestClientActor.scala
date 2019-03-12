@@ -8,6 +8,7 @@ import akka.http.scaladsl.model._
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 import ua.ucu.edu.Main.system
 import ua.ucu.edu.model.Location
+import org.slf4j.LoggerFactory
 
 import scala.concurrent.Future
 
@@ -15,13 +16,16 @@ class WhetherRestClientActor extends Actor with ActorLogging {
   import WhetherRestClientActor._
   import system.dispatcher
   import scala.util.{Failure, Success}
+
+  val logger = LoggerFactory.getLogger(getClass)
+
   implicit val actorSystem: ActorSystem = context.system
 
   val BrokerList: String = System.getenv("KAFKA_BROKERS")
   val topic = System.getenv("WEATHER_TOPIC_NAME")
   val props = new Properties()
 
-  log.info("[Kafka] Started topic: {}", topic)
+  logger.info("[Kafka] Started topic: {}", topic)
 
   props.put("bootstrap.servers", BrokerList)
   props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
@@ -40,13 +44,11 @@ class WhetherRestClientActor extends Actor with ActorLogging {
       weatherAtLocation(loc.latitude.toString, loc.longitude.toString)
         .onComplete {
           case Success(s) => {
-            log.info("[Kafka] Stream data\n: {}", s._3.toString)
-            val data = new ProducerRecord[String, String](topic, loc.city, s._3.toString)
+            logger.info("[Kafka] Stream data\n: {}", s._3.toString)
+            val data = new ProducerRecord[String, String](topic, loc.city.toLowerCase, s._3.toString)
             producer.send(data)
           }
-          case Failure(f) => {
-            println(f.getMessage)
-          }
+          case Failure(f) => println(f.getMessage)
       }
     }
     case InitiateCityRequest => {
@@ -54,13 +56,11 @@ class WhetherRestClientActor extends Actor with ActorLogging {
       weatherAtCity(loc.city)
         .onComplete {
           case Success(s) => {
-            log.info("[Kafka] Stream data\n: {}", s._3.toString)
-            val data = new ProducerRecord[String, String](topic, loc.city, s._3.toString)
+            logger.info("[Kafka] Stream data\n: {}", s._3.toString)
+            val data = new ProducerRecord[String, String](topic, loc.city.toLowerCase, s._3.toString)
             producer.send(data)
           }
-          case Failure(f) => {
-            println(f.getMessage)
-          }
+          case Failure(f) => println(f.getMessage)
       }
     }
   }
@@ -71,9 +71,9 @@ class WhetherRestClientActor extends Actor with ActorLogging {
       HttpRequest(
         HttpMethods.GET,
         url.withQuery(Uri.Query(
-          ("lon" -> lon),
-          ("lat" -> lat),
-          ("APPID" -> API_KEY),
+          "lon" -> lon,
+          "lat" -> lat,
+          "APPID" -> API_KEY,
         ))
       )
     )
@@ -85,15 +85,15 @@ class WhetherRestClientActor extends Actor with ActorLogging {
       HttpRequest(
         HttpMethods.GET,
         url.withQuery(Uri.Query(
-          ("q" -> city),
-          ("APPID" -> API_KEY),
+          "q" -> city,
+          "APPID" -> API_KEY,
         ))
       )
     )
   }
 
   override def postStop(): Unit = {
-    log.info("[Stopped] weather data producer")
+    logger.info("[Stopped] weather data producer")
     producer.close()
   }
 }

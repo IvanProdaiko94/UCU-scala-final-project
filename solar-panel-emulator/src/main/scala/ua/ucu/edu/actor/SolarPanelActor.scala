@@ -52,7 +52,7 @@ class SolarPanelActor(val panelId: String, location: Location) extends Actor wit
   override def preStart(): Unit = {
     log.info("[Started] Solar panel : {}", panelId)
     // DONE: schedule measurement reads
-    context.system.scheduler.schedule(5 second, 5 seconds, self, ReadMeasurement)(context.dispatcher, self)
+    context.system.scheduler.schedule(12 second, 5 seconds, self, ReadMeasurement)(context.dispatcher, self)
   }
 
   override def postStop(): Unit = {

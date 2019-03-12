@@ -28,5 +28,5 @@ object Main extends App {
 
   val actor = system.actorOf(Props[WhetherRestClientActor], "WhetherRestClientActor")
 
-  system.scheduler.schedule(3 seconds, 1 seconds, actor, WhetherRestClientActor.InitiateLocationRequest)
+  system.scheduler.schedule(10 seconds, 10 minutes, actor, WhetherRestClientActor.InitiateLocationRequest)
 }
